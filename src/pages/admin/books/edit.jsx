@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from "react-router-dom";
-import { getGenres } from "../../../_services/genres";
-import { getAuthors } from "../../../_services/author";
-import { createBook } from '../../../_services/books';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getGenres } from '../../../_services/genres';
+import { getAuthors } from '../../../_services/author';
+import { createBook, showBook, updateBook } from '../../../_services/books';
 
-function CreateBooks() {
+function EditBooks() {
+    const { id } = useParams()
+    const navigate = useNavigate()
     const [genre, setGenres] = useState([]);
     const [author, setAuthors] = useState([]);
-
     const [formData, setFormData] = useState({
         title: "",
         price: "",
@@ -16,22 +17,33 @@ function CreateBooks() {
         author_id: "",
         cover_photo: null,
         description: "",
+        _method: "PUT",
     });
-
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
-            const [genreData, authorData] = await Promise.all([
+            const [genreData, authorData, bookData] = await Promise.all([
                 getGenres(),
                 getAuthors(),
-            ])
+                showBook(id),
+            ]);
 
-            setGenres(genreData)
-            setAuthors(authorData)
+            setGenres(Array.isArray(genreData) ? genreData : []);
+            setAuthors(Array.isArray(authorData) ? authorData : []);
+            setFormData({
+                title: bookData.title,
+                price: bookData.price,
+                stock: bookData.stock,
+                genre_id: bookData.genre_id,
+                author_id: bookData.author_id,
+                cover_photo: bookData.cover_photo,
+                description: bookData.description,
+            });
         }
-        fetchData()
-    }, [])
+        fetchData();
+    }, [id]);
+
+    console.log(formData)
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
@@ -48,30 +60,35 @@ function CreateBooks() {
             });
         }
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
             const payload = new FormData();
+
             for (const key in formData) {
-                payload.append(key, formData[key]);
+                if (key === "cover_photo") {
+                    if (formData.cover_photo instanceof File) {
+                        payload.append("cover_photo", formData.cover_photo);
+                    }
+                } else {
+                    payload.append(key, formData[key]);
+                }
             }
 
-            await createBook(payload);
-            alert("Book created successfully!");
+            await updateBook(id, payload); 
             navigate("/admin/books");
         } catch (error) {
-            console.error(error);
-            alert("Error creating book!");
+            console.log(error);
+            alert("Error updating book");
         }
-    }
+    };
 
     return (
         <section className="bg-white dark:bg-gray-900 min-h-screen">
             <div className="max-w-4xl px-6 py-10 mx-auto lg:py-16">
                 <h2 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
-                    Create New Book
+                    Edit Book
                 </h2>
 
                 <form onSubmit={handleSubmit}>
@@ -189,7 +206,6 @@ function CreateBooks() {
                                 onChange={handleChange}
                                 accept="image/*"
                                 className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:ring-indigo-600 focus:border-indigo-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                required
                             />
                         </div>
 
@@ -217,7 +233,7 @@ function CreateBooks() {
                             type="submit"
                             className="px-5 py-2.5 text-sm font-medium text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300"
                         >
-                            Create Book
+                            Save Book
                         </button>
                         <button
                             type="reset"
@@ -232,4 +248,6 @@ function CreateBooks() {
     );
 }
 
-export default CreateBooks;
+
+
+export default EditBooks

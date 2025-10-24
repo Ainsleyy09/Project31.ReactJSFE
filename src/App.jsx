@@ -13,6 +13,10 @@ import AdminAuthors from "./pages/admin/authors";
 import CreateAuthors from "./pages/admin/authors/create";
 import AdminGenres from "./pages/admin/genres";
 import CreateGenres from "./pages/admin/genres/create";
+import EditBooks from "./pages/admin/books/edit";
+import ShowBooks from "./pages/public/books/show";
+import EditAuthors from "./pages/admin/authors/edit";
+import EditGenres from "./pages/admin/genres/edit";
 
 function App() {
     return (
@@ -20,7 +24,11 @@ function App() {
             <Routes>
                 <Route element={<PublicLayout />}>
                     <Route index element={<Home />} />
-                    <Route path="books" element={<Books />} />
+
+                    <Route path="books">
+                        <Route index element={<Books />} />
+                        <Route path="show/:id" element={<ShowBooks />} />
+                    </Route>
                 </Route>
 
                 <Route path="login" element={<Login />} />
@@ -32,16 +40,19 @@ function App() {
                     <Route path="books">
                         <Route index element={<AdminBooks />} />
                         <Route path="create" element={<CreateBooks />} />
+                        <Route path="edit/:id" element={<EditBooks />} />
                     </Route>
 
                     <Route path="authors">
                         <Route index element={<AdminAuthors />} />
-                        <Route path="create" element={<CreateAuthors/>} />
+                        <Route path="create" element={<CreateAuthors />} />
+                        <Route path="edit/:id" element={<EditAuthors />} />
                     </Route>
 
                     <Route path="genres">
                         <Route index element={<AdminGenres />} />
-                        <Route path="create" element={<CreateGenres/>} />
+                        <Route path="create" element={<CreateGenres />} />
+                        <Route path="edit/:id" element={<EditGenres />} />
                     </Route>
                 </Route>
             </Routes>
