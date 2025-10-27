@@ -1,6 +1,42 @@
-import React from 'react'
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { register } from "../../_services/auth";
 
 function Register() {
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        password: "",
+    });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError("");
+
+        try {
+            const res = await register(formData);
+            console.log("Register success:", res);
+
+            alert("Akun berhasil dibuat! Silakan login.");
+            navigate("/login");
+        } catch (err) {
+            console.error("Register error:", err);
+            setError("Pendaftaran gagal. Coba lagi.");
+        } finally {
+            setLoading(false);
+        }
+    };
     return (
         <>
             <section className="bg-gray-50 dark:bg-gray-900">
@@ -10,18 +46,23 @@ function Register() {
                             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                                 Create an account
                             </h1>
-                            <form className="space-y-4 md:space-y-6" action="#">
+                            {error && (
+                                <p className="text-red-500 text-sm text-center">{error}</p>
+                            )}
+                            <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6" action="#">
                                 <div>
                                     <label
                                         htmlFor="email"
                                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                     >
-                                        Your email
+                                        Email
                                     </label>
                                     <input
                                         type="email"
                                         name="email"
                                         id="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
                                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-600 focus:border-indigo-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                         placeholder="name@company.com"
                                         required=""
@@ -32,14 +73,16 @@ function Register() {
                                         htmlFor="name"
                                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                     >
-                                        Your name
+                                        Name
                                     </label>
                                     <input
                                         type="text"
                                         name="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
                                         id="name"
                                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-600 focus:border-indigo-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        placeholder="name@company.com"
+                                        placeholder="Ainsley"
                                         required=""
                                     />
                                 </div>
@@ -54,6 +97,8 @@ function Register() {
                                         type="password"
                                         name="password"
                                         id="password"
+                                        value={formData.password}
+                                        onChange={handleChange}
                                         placeholder="••••••••"
                                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-600 focus:border-indigo-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                         required=""
@@ -86,18 +131,19 @@ function Register() {
                                 </div>
                                 <button
                                     type="submit"
-                                    className="w-full text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
+                                    disabled={loading}
+                                    className="w-full text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                                 >
-                                    Create an account
+                                    {loading ? "Processing..." : "Create an account"}
                                 </button>
                                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                                     Already have an account?{" "}
-                                    <a
-                                        href="login"
+                                    <Link
+                                        to="/login"
                                         className="font-medium text-indigo-600 hover:underline dark:text-indigo-500"
                                     >
                                         Login here
-                                    </a>
+                                    </Link>
                                 </p>
                             </form>
                         </div>

@@ -1,7 +1,36 @@
-import React from 'react'
-import { Link, Outlet } from "react-router-dom";
+import React, { useEffect } from 'react'
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { logout, useDecodeToken } from '../_services/auth';
+
 
 function AdminLayout() {
+    const navigate = useNavigate();
+    const token = localStorage.getItem("accessToken");
+    const rawUserInfo = localStorage.getItem("userInfo");
+    const userInfo = rawUserInfo && rawUserInfo !== "undefined" ? JSON.parse(rawUserInfo) : null;
+
+    const decodedData = useDecodeToken(token);
+
+    useEffect(() => {
+        if (!token || !decodedData || !decodedData.success) {
+            navigate("/login");
+            return;
+        }
+
+        const role = userInfo?.role;
+        if (role !== "admin") {
+            navigate("/");
+        }
+    }, [token, decodedData, navigate]);
+
+    const handleLogout = async () =>{
+        if(token){
+            localStorage.removeItem("userInfo");
+            await logout({token});
+        }
+        navigate("/login");
+    }
+
     return (
         <>
             <div className="antialiased bg-gray-50 dark:bg-gray-900">
@@ -77,6 +106,12 @@ function AdminLayout() {
                                     ></path>
                                 </svg>
                             </button>
+
+                            <Link to="register"
+                                className="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none dark:focus:ring-indigo-800"
+                            >
+                                {userInfo.name}
+                            </Link>
 
                             <button
                                 type="button"
@@ -274,6 +309,27 @@ function AdminLayout() {
                                     </svg>
                                     <span className="ml-3">Help</span>
                                 </Link>
+                            </li>
+                            <li>
+                                <button
+                                    onClick={handleLogout}
+                                    className="flex items-center p-2 text-base font-medium text-white bg-red-600 rounded-lg transition duration-150 hover:bg-red-700 dark:text-white dark:bg-red-600 dark:hover:bg-red-700 group"
+                                >
+                                    <svg
+                                        aria-hidden="true"
+                                        className="flex-shrink-0 w-6 h-6 text-white transition duration-150 group-hover:text-white"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M3 4a1 1 0 011-1h6a1 1 0 110 2H5v10h5a1 1 0 110 2H4a1 1 0 01-1-1V4zm12.293 4.707a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L13.586 10H9a1 1 0 110-2h4.586l-2.293-2.293a1 1 0 011.414-1.414l3 3z"
+                                            clipRule="evenodd"
+                                        ></path>
+                                    </svg>
+                                    <span className="ml-3">Logout</span>
+                                </button>
                             </li>
                         </ul>
                     </div>
