@@ -7,7 +7,12 @@ export const getGenres = async () => {
 
 export const createGenre = async (data) => {
     try {
-        const response = await API.post("/genres", data)
+        const response = await API.post("/genres", data, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+                "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
+            },
+        });
         return response.data
     } catch (error) {
         console.log(error);
@@ -25,6 +30,7 @@ export const updateGenre = async (id, formData) => {
         const response = await API.post(`/genres/${id}?_method=PUT`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
+                "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
             },
         });
         return response.data;
@@ -36,7 +42,11 @@ export const updateGenre = async (id, formData) => {
 
 export const deleteGenre = async (id) => {
     try {
-        await API.delete(`/genres/${id}`);
+        await API.delete(`/genres/${id}`, {
+            headers :{
+                "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
+            }
+        });
     } catch (error) {
         console.error("Error deleting genre:", error.response?.data || error.message);
         throw error;

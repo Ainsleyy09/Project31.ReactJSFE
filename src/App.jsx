@@ -17,6 +17,11 @@ import EditBooks from "./pages/admin/books/edit";
 import ShowBooks from "./pages/public/books/show";
 import EditAuthors from "./pages/admin/authors/edit";
 import EditGenres from "./pages/admin/genres/edit";
+import Blogs from "./pages/public/blog";
+import Services from "./pages/public/service";
+import TransactionHistory from "./pages/public/history";
+import AdminTransactions from "./pages/admin/transactions";
+import AdminUsers from "./pages/admin/users";
 
 function App() {
     return (
@@ -29,6 +34,10 @@ function App() {
                         <Route index element={<Books />} />
                         <Route path="show/:id" element={<ShowBooks />} />
                     </Route>
+
+                    <Route path="blogs" element={<Blogs />} />
+                    <Route path="services" element={<Services />} />
+                    <Route path="transactions" element={<TransactionHistory />} />
                 </Route>
 
                 <Route path="login" element={<Login />} />
@@ -53,6 +62,14 @@ function App() {
                         <Route index element={<AdminGenres />} />
                         <Route path="create" element={<CreateGenres />} />
                         <Route path="edit/:id" element={<EditGenres />} />
+                    </Route>
+
+                    <Route path="transactions">
+                        <Route index element={<AdminTransactions />} />
+                    </Route>
+
+                    <Route path="users">
+                        <Route index element={<AdminUsers />} />
                     </Route>
                 </Route>
             </Routes>

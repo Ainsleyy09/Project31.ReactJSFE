@@ -7,7 +7,11 @@ export const getAuthors = async () => {
 
 export const createAuthor = async (data) => {
     try {
-        const response = await API.post("/authors", data)
+        const response = await API.post("/authors", data, {
+            headers : {
+                "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
+            },
+        });
         return response.data
     } catch (error) {
         console.log(error);
@@ -25,6 +29,7 @@ export const updateAuthor = async (id, formData) => {
         const response = await API.post(`/authors/${id}?_method=PUT`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
+                "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
             },
         });
         return response.data;
@@ -36,7 +41,11 @@ export const updateAuthor = async (id, formData) => {
 
 export const deleteAuthor = async (id) => {
     try {
-        await API.delete(`/authors/${id}`);
+        await API.delete(`/authors/${id}`, {
+            headers : {
+                "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
+            }
+        });
     } catch (error) {
         console.error("Error deleting author:", error.response?.data || error.message);
         throw error;

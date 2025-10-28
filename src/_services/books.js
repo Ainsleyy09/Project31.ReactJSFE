@@ -10,6 +10,7 @@ export const createBook = async (formData) => {
         const response = await API.post("/books", formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
+                "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
             },
         });
         return response.data;
@@ -29,6 +30,7 @@ export const updateBook = async (id, formData) => {
         const response = await API.post(`/books/${id}?_method=PUT`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
+                "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
             },
         });
         return response.data;
@@ -41,7 +43,11 @@ export const updateBook = async (id, formData) => {
 
 export const deleteBook = async (id) => {
     try {
-        await API.delete(`/books/${id}`)
+        await API.delete(`/books/${id}` ,{
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
+            },
+        });
     } catch (error) {
         console.log(error)
         throw error;
