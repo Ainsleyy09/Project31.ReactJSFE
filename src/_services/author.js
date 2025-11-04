@@ -26,7 +26,7 @@ export const showAuthor = async (id) => {
 
 export const updateAuthor = async (id, formData) => {
     try {
-        const response = await API.post(`/authors/${id}?_method=PUT`, formData, {
+        const response = await API.post(`/authors/${id}`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
                 "Authorization": `Bearer ${localStorage.getItem('accessToken')}`

@@ -27,10 +27,10 @@ export const showGenre = async (id) => {
 
 export const updateGenre = async (id, formData) => {
     try {
-        const response = await API.post(`/genres/${id}?_method=PUT`, formData, {
+        const response = await API.post(`/genres/${id}`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
-                "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
+                "Authorization": `Bearer ${localStorage.getItem('accessToken')}`,
             },
         });
         return response.data;

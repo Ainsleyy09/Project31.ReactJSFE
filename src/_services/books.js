@@ -27,10 +27,10 @@ export const showBook = async (id) => {
 
 export const updateBook = async (id, formData) => {
     try {
-        const response = await API.post(`/books/${id}?_method=PUT`, formData, {
+        const response = await API.post(`/books/${id}`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
-                "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
+                "Authorization": `Bearer ${localStorage.getItem('accessToken')}`,
             },
         });
         return response.data;
@@ -39,7 +39,6 @@ export const updateBook = async (id, formData) => {
         throw error;
     }
 };
-
 
 export const deleteBook = async (id) => {
     try {
